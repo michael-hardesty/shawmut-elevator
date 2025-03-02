@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shawmut Elevator</title>
+    <title>Button Click Logger</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,19 +13,20 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f5f5f5;
+            background-color: #333333;
+            color: white;
         }
         .container {
             text-align: center;
-            background-color: white;
+            background-color: #444444;
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             width: 80%;
             max-width: 500px;
         }
         h1 {
-            color: #333;
+            color: white;
         }
         .button-container {
             display: flex;
@@ -39,23 +40,31 @@
             border: none;
             border-radius: 4px;
             transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         button:active {
             transform: scale(0.98);
         }
         #leftBtn {
-            background-color: #2196F3;
+            background-color: #e53935;
             color: white;
         }
         #rightBtn {
-            background-color: #4CAF50;
+            background-color: #43a047;
             color: white;
         }
         #leftBtn:hover {
-            background-color: #0b7dda;
+            background-color: #c62828;
         }
         #rightBtn:hover {
-            background-color: #45a049;
+            background-color: #2e7d32;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 4px;
         }
         .notification {
             padding: 10px;
@@ -64,16 +73,16 @@
             display: none;
         }
         .success {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #2e7d32;
+            color: white;
         }
         .error {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #c62828;
+            color: white;
         }
         #eventLog {
             margin-top: 1.5rem;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #555;
             padding-top: 1rem;
         }
         #logEntries {
@@ -81,7 +90,8 @@
             overflow-y: auto;
             text-align: left;
             padding: 0.5rem;
-            background-color: #f8f9fa;
+            background-color: #222222;
+            color: #e0e0e0;
             border-radius: 4px;
         }
     </style>
@@ -89,11 +99,11 @@
 <body>
     <div class="container">
         <h1>Shawmut Elevator</h1>
-        <p>Click the button for which elevator you got.</p>
+        <p>Click the button for which elevator you got on the 5th floor.</p>
         
         <div class="button-container">
-            <button id="leftBtn">Left</button>
-            <button id="rightBtn">Right</button>
+            <button id="leftBtn"><span class="emoji">😡</span>Left</button>
+            <button id="rightBtn"><span class="emoji">😊</span>Right</button>
         </div>
         
         <div id="notification" class="notification"></div>
