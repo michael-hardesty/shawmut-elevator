@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button Click Logger</title>
+    <title>Shawmut Elevator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,18 +44,18 @@
             transform: scale(0.98);
         }
         #leftBtn {
-            background-color: #4CAF50;
-            color: white;
-        }
-        #rightBtn {
             background-color: #2196F3;
             color: white;
         }
+        #rightBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
         #leftBtn:hover {
-            background-color: #45a049;
+            background-color: #0b7dda;
         }
         #rightBtn:hover {
-            background-color: #0b7dda;
+            background-color: #45a049;
         }
         .notification {
             padding: 10px;
@@ -88,8 +88,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Button Click Logger</h1>
-        <p>Click either the left or right button to log an event.</p>
+        <h1>Shawmut Elevator</h1>
+        <p>Click the button for which elevator you got.</p>
         
         <div class="button-container">
             <button id="leftBtn">Left</button>
@@ -99,13 +99,13 @@
         <div id="notification" class="notification"></div>
         
         <div id="eventLog">
-            <h3>Recent Events (Client-side only)</h3>
+            <h3>Recent Events</h3>
             <div id="logEntries"></div>
         </div>
     </div>
 
     <!-- Import Supabase JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -115,12 +115,22 @@
             const logEntries = document.getElementById('logEntries');
             
             // Initialize Supabase client
-            const supabaseUrl = 'https://myhgzkkxudtzevyvhfhs.supabase.co';
-            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15aGd6a2t4dWR0emV2eXZoZmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5NDQ5MjEsImV4cCI6MjA1NjUyMDkyMX0.u2-x4EmCgTq1vjlDF7Eu5aunE8oN_jt1hKBM5sYAIRg';
-            const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            const supabaseUrl = 'https://myhgzkkxudtzevyvhfhs.supabase.co'; // Replace with actual URL
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15aGd6a2t4dWR0emV2eXZoZmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5NDQ5MjEsImV4cCI6MjA1NjUyMDkyMX0.u2-x4EmCgTq1vjlDF7Eu5aunE8oN_jt1hKBM5sYAIRg'; // Replace with actual key
+            
+            // Check if Supabase is loaded
+            if (!window.supabase) {
+                console.error('Supabase library not loaded properly!');
+                showNotification('Error: Supabase library not loaded!', false);
+                return;
+            }
+            
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            console.log('Supabase client initialized');
             
             // Function to show notification
             function showNotification(message, isSuccess = true) {
+                console.log('Notification:', message, isSuccess ? 'success' : 'error');
                 notification.textContent = message;
                 notification.className = 'notification ' + (isSuccess ? 'success' : 'error');
                 notification.style.display = 'block';
@@ -145,6 +155,7 @@
             async function logButtonClick(buttonType) {
                 // Add to visual log immediately
                 addLogEntry(buttonType);
+                console.log(`Button clicked: ${buttonType}`);
                 
                 try {
                     // Insert data into Supabase
@@ -157,20 +168,38 @@
                             }
                         ]);
                     
+                    console.log('Supabase response:', { data, error });
+                    
                     if (error) {
                         throw error;
                     }
                     
                     showNotification(`${buttonType} button click logged successfully!`);
                 } catch (error) {
-                    showNotification(`Failed to log ${buttonType} button click: ${error.message}`, false);
-                    console.error('Error:', error);
+                    console.error('Error logging click:', error);
+                    showNotification(`Failed to log ${buttonType} button click: ${error.message || 'Unknown error'}`, false);
                 }
             }
             
             // Event listeners for buttons
             leftBtn.addEventListener('click', () => logButtonClick('Left'));
             rightBtn.addEventListener('click', () => logButtonClick('Right'));
+            
+            // Check connection on load
+            (async function checkConnection() {
+                try {
+                    const { data, error } = await supabase.from('button_clicks').select('id').limit(1);
+                    if (error) {
+                        console.error('Connection test failed:', error);
+                        showNotification('Database connection issue. Check console for details.', false);
+                    } else {
+                        console.log('Connection to Supabase established successfully');
+                    }
+                } catch (err) {
+                    console.error('Connection test error:', err);
+                    showNotification('Failed to connect to database. Check console for details.', false);
+                }
+            })();
         });
     </script>
 </body>
