@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        #leftBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #rightBtn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #leftBtn:hover {
+            background-color: #45a049;
+        }
+        #rightBtn:hover {
+            background-color: #0b7dda;
+        }
+        .notification {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        #eventLog {
+            margin-top: 1.5rem;
+            border-top: 1px solid #ddd;
+            padding-top: 1rem;
+        }
+        #logEntries {
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Button Click Logger</h1>
+        <p>Click either the left or right button to log an event.</p>
+        
+        <div class="button-container">
+            <button id="leftBtn">Left</button>
+            <button id="rightBtn">Right</button>
+        </div>
+        
+        <div id="notification" class="notification"></div>
+        
+        <div id="eventLog">
+            <h3>Recent Events (Client-side only)</h3>
+            <div id="logEntries"></div>
+        </div>
+    </div>
+
+    <!-- Import Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const leftBtn = document.getElementById('leftBtn');
+            const rightBtn = document.getElementById('rightBtn');
+            const notification = document.getElementById('notification');
+            const logEntries = document.getElementById('logEntries');
+            
+            // Initialize Supabase client
+            const supabaseUrl = 'https://myhgzkkxudtzevyvhfhs.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15aGd6a2t4dWR0emV2eXZoZmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5NDQ5MjEsImV4cCI6MjA1NjUyMDkyMX0.u2-x4EmCgTq1vjlDF7Eu5aunE8oN_jt1hKBM5sYAIRg';
+            const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            
+            // Function to show notification
+            function showNotification(message, isSuccess = true) {
+                notification.textContent = message;
+                notification.className = 'notification ' + (isSuccess ? 'success' : 'error');
+                notification.style.display = 'block';
+                
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+            
+            // Function to add log entry to the UI
+            function addLogEntry(buttonType) {
+                const now = new Date();
+                const timestamp = now.toLocaleTimeString() + '.' + now.getMilliseconds();
+                
+                const entry = document.createElement('div');
+                entry.textContent = `${timestamp}: ${buttonType} button clicked`;
+                logEntries.prepend(entry);
+            }
+            
+            // Function to log button click
+            async function logButtonClick(buttonType) {
+                // Add to visual log immediately
+                addLogEntry(buttonType);
+                
+                try {
+                    // Insert data into Supabase
+                    const { data, error } = await supabase
+                        .from('button_clicks')
+                        .insert([
+                            { 
+                                button_type: buttonType,
+                                clicked_at: new Date().toISOString()
+                            }
+                        ]);
+                    
+                    if (error) {
+                        throw error;
+                    }
+                    
+                    showNotification(`${buttonType} button click logged successfully!`);
+                } catch (error) {
+                    showNotification(`Failed to log ${buttonType} button click: ${error.message}`, false);
+                    console.error('Error:', error);
+                }
+            }
+            
+            // Event listeners for buttons
+            leftBtn.addEventListener('click', () => logButtonClick('Left'));
+            rightBtn.addEventListener('click', () => logButtonClick('Right'));
+        });
+    </script>
+</body>
+</html>
