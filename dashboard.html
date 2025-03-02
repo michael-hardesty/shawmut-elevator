@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button Click Dashboard</title>
+    <title>Elevator Ride Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
@@ -208,7 +208,7 @@
 <body>
     <div class="dashboard-container">
         <header>
-            <h1>Button Click Dashboard</h1>
+            <h1>Elevator Ride Dashboard</h1>
             <button id="refreshBtn" class="refresh-btn">Refresh Data</button>
         </header>
         
@@ -221,17 +221,17 @@
         
         <div class="stats-container">
             <div class="stat-card">
-                <h2>Total Clicks</h2>
+                <h2>Total Rides</h2>
                 <div id="totalClicks" class="stat-value">-</div>
             </div>
             
             <div class="stat-card">
-                <h2>Left Button (😡)</h2>
+                <h2>Left Elevator (😡)</h2>
                 <div id="leftClicks" class="stat-value left-value">-</div>
             </div>
             
             <div class="stat-card">
-                <h2>Right Button (😊)</h2>
+                <h2>Right Elevator (😊)</h2>
                 <div id="rightClicks" class="stat-value right-value">-</div>
             </div>
             
@@ -243,30 +243,30 @@
         
         <div class="chart-container">
             <div class="chart-card">
-                <h2>Clicks Over Time</h2>
+                <h2>Rides Over Time</h2>
                 <canvas id="timeChart"></canvas>
             </div>
             
             <div class="chart-card">
-                <h2>Button Distribution</h2>
+                <h2>Ride Distribution</h2>
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
         
         <div class="chart-container">
             <div class="chart-card">
-                <h2>Clicks by Hour of Day</h2>
+                <h2>Rides by Hour of Day</h2>
                 <canvas id="hourChart"></canvas>
             </div>
             
             <div class="chart-card">
-                <h2>Clicks by Day of Week</h2>
+                <h2>Rides by Day of Week</h2>
                 <canvas id="weekdayChart"></canvas>
             </div>
         </div>
         
         <div class="recent-clicks">
-            <h2>Recent Clicks</h2>
+            <h2>Recent Rides</h2>
             <div id="recentClicksTable">
                 <div class="loader">
                     <div class="spinner"></div>
